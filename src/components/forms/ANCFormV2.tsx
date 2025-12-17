@@ -301,15 +301,20 @@ const createEmptyANCCase = (patientName: string, patientAge: number): ANCCase =>
   },
 });
 
+// Tab types for ANC form - 'history' and 'obhistory' are now accessed via sidebar
+export type AncTabType = 'booking' | 'history' | 'obhistory' | 'followup' | 'investigations' | 'delivery';
+
 interface ANCFormProps {
   patientName: string;
   patientAge: number;
+  /** Initial tab to display, used when navigating from sidebar sub-items */
+  initialTab?: AncTabType;
 }
 
-export const ANCFormV2: React.FC<ANCFormProps> = ({ patientName, patientAge }) => {
+export const ANCFormV2: React.FC<ANCFormProps> = ({ patientName, patientAge, initialTab }) => {
   const [ancCase, setAncCase] = useState<ANCCase | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'booking' | 'history' | 'obhistory' | 'followup' | 'investigations' | 'delivery'>('booking');
+  const [activeTab, setActiveTab] = useState<AncTabType>(initialTab || 'booking');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     obstetric: true,
     pastOb: true,
@@ -319,6 +324,13 @@ export const ANCFormV2: React.FC<ANCFormProps> = ({ patientName, patientAge }) =
     vaccines: true,
     booking: true,
   });
+
+  // Update activeTab when initialTab changes (e.g., from sidebar navigation)
+  React.useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -481,16 +493,10 @@ export const ANCFormV2: React.FC<ANCFormProps> = ({ patientName, patientAge }) =
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs - Medical History and OB History are now accessed via sidebar */}
       <div className="anc-tabs">
         <button className={`anc-tab ${activeTab === 'booking' ? 'active' : ''}`} onClick={() => setActiveTab('booking')}>
           Booking Visit
-        </button>
-        <button className={`anc-tab ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setActiveTab('history')}>
-          Medical History
-        </button>
-        <button className={`anc-tab ${activeTab === 'obhistory' ? 'active' : ''}`} onClick={() => setActiveTab('obhistory')}>
-          OB History ({ancCase.pastObstetricHistory.length})
         </button>
         <button className={`anc-tab ${activeTab === 'followup' ? 'active' : ''}`} onClick={() => setActiveTab('followup')}>
           Follow-up Visits ({ancCase.followUpVisits.length})

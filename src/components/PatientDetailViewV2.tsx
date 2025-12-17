@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { PatientSidebarV2 } from './sidebar/PatientSidebarV2';
-import { SectionPlaceholder } from './SectionPlaceholder';
+import type { SectionType } from './sidebar/PatientSidebarV2';
 import { PatientDetailsPage } from './PatientDetailsPage';
 import { GynecologyForm } from './forms/GynecologyFormV2';
 import { ANCFormV2 } from './forms/ANCFormV2';
+import { MedicalHistoryForm } from './forms/MedicalHistoryForm';
+import { ObstetricHistoryForm } from './forms/ObstetricHistoryForm';
 import { ArrowLeft } from 'lucide-react';
 import type { Patient, PatientProfile } from '../types';
 import { EditProfileModal } from './sidebar/Sidebar';
@@ -19,7 +21,7 @@ export const PatientDetailViewV2: React.FC<PatientDetailViewV2Props> = ({
   onBack,
   onPatientUpdate,
 }) => {
-  const [activeSection, setActiveSection] = useState<'details' | 'anc' | 'gynecology' | 'general'>('details');
+  const [activeSection, setActiveSection] = useState<SectionType>('details');
   const [showEditProfile, setShowEditProfile] = useState(false);
 
   const handleProfileSave = (updated: PatientProfile) => {
@@ -35,8 +37,9 @@ export const PatientDetailViewV2: React.FC<PatientDetailViewV2Props> = ({
     switch (activeSection) {
       case 'details': return 'Patient Details';
       case 'anc': return 'ANC Case';
+      case 'medical-history': return 'Medical History';
+      case 'ob-history': return 'Obstetric History';
       case 'gynecology': return 'Gynecology';
-      case 'general': return 'General Visits';
       default: return activeSection;
     }
   };
@@ -48,10 +51,12 @@ export const PatientDetailViewV2: React.FC<PatientDetailViewV2Props> = ({
         return <PatientDetailsPage patient={patient} onEditProfile={() => setShowEditProfile(true)} />;
       case 'anc':
         return <ANCFormV2 patientName={patient.profile.name} patientAge={patient.profile.age} />;
+      case 'medical-history':
+        return <MedicalHistoryForm patientName={patient.profile.name} patientAge={patient.profile.age} />;
+      case 'ob-history':
+        return <ObstetricHistoryForm patientName={patient.profile.name} patientAge={patient.profile.age} />;
       case 'gynecology':
         return <GynecologyForm patientName={patient.profile.name} patientAge={patient.profile.age} />;
-      case 'general':
-        return <SectionPlaceholder section="general" patientName={patient.profile.name} />;
       default:
         return <PatientDetailsPage patient={patient} onEditProfile={() => setShowEditProfile(true)} />;
     }

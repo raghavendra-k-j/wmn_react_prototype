@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import {
   Search,
-  Filter,
   Plus,
   ChevronRight,
   AlertTriangle,
   Calendar,
-  Phone,
   Droplets,
 } from 'lucide-react';
 import type { PatientListItem } from '../mockData';

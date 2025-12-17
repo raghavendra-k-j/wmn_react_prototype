@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
 import {
+  ChevronRight,
   ChevronDown,
   ChevronUp,
-  ChevronRight,
   Edit3,
   Phone,
   MapPin,
   Droplets,
   AlertTriangle,
   Baby,
-  Stethoscope,
   Heart,
   User,
   FileText,
+  ClipboardList,
+  History,
 } from 'lucide-react';
 import type { Patient } from '../../types';
 
+// Section types - Medical History and Obstetric History are main sidebar items
+export type SectionType = 'details' | 'anc' | 'medical-history' | 'ob-history' | 'gynecology';
+
 interface PatientSidebarV2Props {
   patient: Patient;
-  activeSection: 'details' | 'anc' | 'gynecology' | 'general';
-  onSectionChange: (section: 'details' | 'anc' | 'gynecology' | 'general') => void;
+  activeSection: SectionType;
+  onSectionChange: (section: SectionType) => void;
   onEditProfile: () => void;
 }
 
@@ -41,12 +45,13 @@ export const PatientSidebarV2: React.FC<PatientSidebarV2Props> = ({
 
   const hasRisks = obstetricHistory.riskFactors.length > 0;
 
-  // Menu items for navigation
+  // Menu items for navigation - Medical History and OB History are now main items
   const menuItems = [
     { id: 'details', label: 'Patient Details', icon: User },
     { id: 'anc', label: 'ANC Visits', icon: Baby, count: patient.visits.filter(v => v.template === 'ANC').length },
+    { id: 'medical-history', label: 'Medical History', icon: ClipboardList },
+    { id: 'ob-history', label: 'Obstetric History', icon: History },
     { id: 'gynecology', label: 'Gynecology', icon: Heart },
-    { id: 'general', label: 'General Visits', icon: Stethoscope },
   ];
 
 
@@ -173,7 +178,7 @@ export const PatientSidebarV2: React.FC<PatientSidebarV2Props> = ({
             <button
               key={item.id}
               className={`psv2-nav-item ${activeSection === item.id ? 'active' : ''}`}
-              onClick={() => onSectionChange(item.id as 'details' | 'anc' | 'gynecology' | 'general')}
+              onClick={() => onSectionChange(item.id as SectionType)}
             >
               <item.icon size={18} />
               <span>{item.label}</span>
